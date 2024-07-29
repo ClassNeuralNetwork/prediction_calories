@@ -1,3 +1,5 @@
+#dispensar este aquivo, não usar para problemas de regressão e sim, de classificação
+
 import pandas as pd
 from imblearn.over_sampling import SMOTE
 
@@ -12,4 +14,3 @@ input_train_balanced, output_train_balanced = sm.fit_resample(input_train,output
 input_train_balanced.to_csv('input_train_balanced.csv',index=False)
 output_train_balanced.to_csv('output_train_balanced.csv',index=False)
 
-# criar pasta model
