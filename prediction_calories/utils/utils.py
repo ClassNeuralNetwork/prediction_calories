@@ -30,11 +30,6 @@ target_column = 'Energ_Kcal'
 input_train, input_test, output_train, output_test = train_test_split(
     dt.drop(columns=[target_column]), dt[target_column], test_size=0.2, random_state=42)
 
-# Padronizar os dados
-scaler = StandardScaler()
-input_train = scaler.fit_transform(input_train)
-input_test = scaler.transform(input_test)
-
 # Salvar os dados divididos em arquivos CSV
 pd.DataFrame(input_train).to_csv('input_train.csv', index=False)
 pd.DataFrame(input_test).to_csv('input_test.csv', index=False)
