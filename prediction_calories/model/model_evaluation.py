@@ -6,13 +6,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import tensorflow as tf
 import shap
 
-
+#Carregando modelo
 model = tf.keras.models.load_model('model.keras')
 
 input_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/input_test_standard.csv')
 output_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/output_test.csv')
 
-#carregand
+#carregando loss
 history = pd.read_csv('loss.csv')
 
 # Avaliar o modelo no conjunto de teste
