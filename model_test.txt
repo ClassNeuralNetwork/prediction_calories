@@ -7,7 +7,6 @@ import tensorflow as tf
 # Carregar os dados
 input_train = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/train/input_train.csv')
 output_train = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/train/output_train.csv')
-
 input_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/input_test.csv')
 output_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/output_test.csv')
 
@@ -155,3 +154,68 @@ plt.xlabel('True Values')
 plt.ylabel('Predictions')
 plt.title('True vs Predicted Values')
 plt.show()
+
+================================================================================================================================================
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+import tensorflow as tf
+import shap
+
+# Carregar os dados
+input_train = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/train/input_train.csv')
+output_train = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/train/output_train.csv')
+input_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/input_test.csv')
+output_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/output_test.csv')
+
+# Verificar a forma dos dados
+print("input_train shape:", input_train.shape)
+print("output_train shape:", output_train.shape)
+print("input_test shape:", input_test.shape)
+print("output_test shape:", output_test.shape)
+
+# Definir o modelo
+model = tf.keras.models.Sequential()
+model.add(tf.keras.layers.Dense(64, activation='relu', input_shape=(input_train.shape[1],)))
+model.add(tf.keras.layers.Dropout(0.5))
+model.add(tf.keras.layers.Dense(64, activation='relu'))
+model.add(tf.keras.layers.Dropout(0.5))
+model.add(tf.keras.layers.Dense(1, activation='linear'))  # Ajustar unidades conforme a saída
+
+# Configurar early stopping
+early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, mode='min', restore_best_weights=True)
+
+# Compilar o modelo
+model.compile(optimizer='adam', loss='mse')
+
+# Resumir o modelo
+model.summary()
+
+# Treinar o modelo
+history = model.fit(input_train, output_train, epochs=100, validation_split=0.2, callbacks=[early_stopping])
+
+# Fazer previsões
+predicoes = model.predict(input_test)
+
+# Se necessário, aplicar inversão de normalização
+scaler_output = StandardScaler()
+output_test_scaled = scaler_output.fit_transform(output_test.values.reshape(-1, 1))
+predicoes_inverted = scaler_output.inverse_transform(predicoes)
+
+# Exibir previsões
+print(predicoes_inverted)
+
+# Plotar o histórico de treinamento
+plt.plot(history.history['loss'], label='train')
+plt.plot(history.history['val_loss'], label='validation')
+plt.legend()
+plt.yscale('log')
+plt.show()
+
+# SHAP para explicabilidade
+#explainer = shap.KernelExplainer(model.predict, input_test)
+#shap_values = explainer.shap_values(input_test)
+
+#shap.summary_plot(shap_values, input_test)
