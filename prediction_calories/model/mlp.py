@@ -17,9 +17,8 @@ scaler_input = StandardScaler()
 input_train = scaler_input.fit_transform(input_train)
 input_test = scaler_input.transform(input_test)
 
-scaler_output = StandardScaler()
-output_train = scaler_output.fit_transform(output_train.values.reshape(-1, 1))
-output_test = scaler_output.transform(output_test.values.reshape(-1, 1))
+pd.DataFrame(input_train).to_csv('input_train_standard.csv', index=False)
+pd.DataFrame(input_test).to_csv('input_test_standard.csv', index=False)
 
 # Definir o modelo
 model = tf.keras.models.Sequential([
@@ -44,51 +43,8 @@ model.summary()
 # Treinar o modelo
 history = model.fit(input_train, output_train, epochs=100, validation_split=0.2, callbacks=[early_stopping])
 
-# Avaliar o modelo no conjunto de teste
-test_loss, test_mae = model.evaluate(input_test, output_test)
-print(f'Test Loss: {test_loss}, Test MAE: {test_mae}')
+#Salvar History
+pd.DataFrame(history.history).to_csv('loss.csv', index=False)
 
-# Fazer previsões no conjunto de teste
-predicoes = model.predict(input_test)
-
-# Inverter a normalização das previsões
-predicoes_inverted = scaler_output.inverse_transform(predicoes)
-output_test_inverted = scaler_output.inverse_transform(output_test)
-
-# Exibir previsões
-print(predicoes_inverted[:10])
-print(output_test_inverted[:10])
-
-# Calcular métricas de avaliação
-mse = mean_squared_error(output_test_inverted, predicoes_inverted)
-mae = mean_absolute_error(output_test_inverted, predicoes_inverted)
-r2 = r2_score(output_test_inverted, predicoes_inverted)
-
-print(f'MSE: {mse}')
-print(f'MAE: {mae}')
-print(f'R²: {r2}')
-
-# Plotar a perda durante o treinamento
-plt.plot(history.history['loss'], label='train')
-plt.plot(history.history['val_loss'], label='validation')
-plt.legend()
-#plt.yscale('log')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.title('Training and Validation Loss')
-plt.show()
-
-# Comparar valores reais e previstos
-plt.scatter(output_test_inverted, predicoes_inverted, alpha=0.5)
-plt.plot([output_test_inverted.min(), output_test_inverted.max()], [output_test_inverted.min(), output_test_inverted.max()], 'r--')
-plt.xlabel('True Values')
-plt.ylabel('Predictions')
-plt.title('True vs Predicted Values')
-plt.show()
-
-background_data = input_train[:1780]  # Usar um subconjunto dos dados de treinamento
-explainer = shap.DeepExplainer(model, background_data)
-shap_values = explainer.shap_values(input_test[:446])  # Usar um subconjunto dos dados de teste
-
-# Plotar o gráfico de resumo
-shap.summary_plot(shap_values, input_test[:446])
+#Salvando Modelo
+model.save('model.keras')
