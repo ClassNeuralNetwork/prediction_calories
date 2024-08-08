@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import tensorflow as tf
-import shap
 
 #Carregando modelo
 model = tf.keras.models.load_model('model.keras')
