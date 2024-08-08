@@ -11,6 +11,14 @@ output_train = pd.read_csv('/home/usuario/Documentos/projetos/prediction_calorie
 input_test = pd.read_csv('/home/usuario/Documentos/projetos/prediction_calories/prediction_calories/dataset/test/input_test.csv')
 output_test = pd.read_csv('/home/usuario/Documentos/projetos/prediction_calories/prediction_calories/dataset/test/input_test.csv')
 
+# selected feature 
+selected_feature = ['Water_(g)', 'Lipid_Tot_(g)', 'Ash_(g)', 'Carbohydrt_(g)',
+       'Fiber_TD_(g)', 'Calcium_(mg)', 'Potassium_(mg)', 'Sodium_(mg)',
+       'FA_Sat_(g)', 'FA_Mono_(g)']
+
+input_train = input_train[selected_feature]
+input_test = input_test[selected_feature]
+
 # Normalizar os dados
 scaler_input = StandardScaler()
 input_train = scaler_input.fit_transform(input_train)
@@ -21,11 +29,11 @@ pd.DataFrame(input_test).to_csv('/home/usuario/Documentos/projetos/prediction_ca
 
 # Definir o modelo ajustado
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(128, activation='tanh', input_shape=(input_train.shape[1],)),
-    tf.keras.layers.Dropout(0.2), 
-    tf.keras.layers.Dense(64, activation='tanh'),
+    tf.keras.layers.Dense(128, activation='relu', input_shape=(input_train.shape[1],)),
+    tf.keras.layers.Dropout(0.1), 
+    tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dropout(0.1),
-    tf.keras.layers.Dense(8, activation='tanh'),
+    tf.keras.layers.Dense(32, activation='relu'),
     tf.keras.layers.Dense(1, activation='linear') #saída única para regressão
 ])
 
@@ -33,7 +41,7 @@ model = tf.keras.models.Sequential([
 early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, mode='min', restore_best_weights=True)
 
 # Compilar o modelo
-optimizer = tf.keras.optimizers.Adam(learning_rate=0.005)
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
 model.compile(optimizer=optimizer, loss='mse', metrics=['mse'])
 
 # Resumir o modelo
