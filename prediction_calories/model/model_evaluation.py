@@ -6,13 +6,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import tensorflow as tf
 
 #Carregando modelo
-model = tf.keras.models.load_model('model.keras')
+model = tf.keras.models.load_model('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/model/model.keras')
 
-input_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/input_test_standard.csv')
-output_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/output_test.csv')
+input_test = pd.read_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/dataset/test/input_test_standard.csv')
+output_test = pd.read_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/dataset/test/output_test.csv')
 
 #carregando loss
-history = pd.read_csv('loss.csv')
+history = pd.read_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/model/loss.csv')
 
 # Avaliar o modelo no conjunto de teste
 test_loss, test_mae = model.evaluate(input_test, output_test)
@@ -34,7 +34,7 @@ print(f'R²: {r2}')
 plt.plot(history['loss'], label='train')
 plt.plot(history['val_loss'], label='validation')
 plt.legend()
-#plt.yscale('log')
+plt.yscale('log')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.title('Training and Validation Loss')

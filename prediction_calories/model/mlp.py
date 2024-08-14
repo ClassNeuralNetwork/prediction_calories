@@ -6,10 +6,10 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import tensorflow as tf
 
 # Carregar os dados
-input_train = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/train/input_train.csv')
-output_train = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/train/output_train.csv')
-input_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/input_test.csv')
-output_test = pd.read_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/output_test.csv')
+input_train = pd.read_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/dataset/train/input_train.csv')
+output_train = pd.read_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/dataset/train/output_train.csv')
+input_test = pd.read_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/dataset/test/input_test.csv')
+output_test = pd.read_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/dataset/test/output_test.csv')
 
 # selected feature 
 selected_feature = ['water_g', 'lipid_g', 'ash_g', 'carbohydrates_g', 'fiber_g',
@@ -29,24 +29,24 @@ input_train_standard = pd.DataFrame(input_train_scaled, columns=selected_feature
 input_test_standard = pd.DataFrame(input_test_scaled, columns=selected_feature)
 
 # Salvar os DataFrames como CSV
-input_train_standard.to_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/train/input_train_standard.csv', index=False)
-input_test_standard.to_csv('C:/project_topicos_especiais/prediction_calories/prediction_calories/dataset/test/input_test_standard.csv', index=False)
+input_train_standard.to_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/dataset/train/input_train_standard.csv', index=False)
+input_test_standard.to_csv('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/dataset/test/input_test_standard.csv', index=False)
 
 # Definir o modelo ajustado
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(128, activation='relu', input_shape=(input_train_scaled.shape[1],)),
-    tf.keras.layers.Dropout(0.1), 
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dropout(0.1),
-    tf.keras.layers.Dense(32, activation='relu'),
-    tf.keras.layers.Dense(1, activation='linear') #saída única para regressão
+    tf.keras.layers.Dense(128, activation='relu', input_shape=(input_train_scaled.shape[1],)),  # Aumentar número de neurônios
+    tf.keras.layers.Dropout(0.0001),  # Ajustar a taxa de dropout
+    tf.keras.layers.Dense(64, activation='relu'),  # Aumentar número de neurônios
+    tf.keras.layers.Dropout(0.0001),
+    tf.keras.layers.Dense(32, activation='relu'),  # Ajustar número de neurônios
+    tf.keras.layers.Dense(1, activation='linear')
 ])
 
 # Configurar early stopping
-early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, mode='min', restore_best_weights=True)
+early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=35, mode='min', restore_best_weights=True)
 
 # Compilar o modelo
-optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)  # Diminuir a taxa de aprendizado
 model.compile(optimizer=optimizer, loss='mse', metrics=['mse'])
 
 # Resumir o modelo
