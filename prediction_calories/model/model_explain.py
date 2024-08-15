@@ -12,7 +12,7 @@ import tensorflow as tf
 import shap
 
 
-model = tf.keras.models.load_model('prediction_calories/model/model.keras')
+model = tf.keras.models.load_model('/home/cleanio/Documentos/Topicos Especiais/projeto/prediction_calories/prediction_calories/model/model.keras')
 
 
 selected_feature = ['water_g', 'lipid_g', 'ash_g', 'carbohydrates_g',
@@ -29,6 +29,8 @@ explainer = shap.KernelExplainer(model.predict, input_train)
 
 shap_values = explainer.shap_values(input_test)
 
-shap.summary_plot(shap_values, input_test, plot_type='bar', feature_names=input_test.columns)
-shap.summary_plot(shap_values, input_test, feature_names=input_test.columns)
-shap.dependence_plot(selected_feature, shap_values, input_test)
+# Plotar o gráfico de resumo
+shap.summary_plot(shap_values, input_test, plot_type="bar", feature_names=selected_feature)
+
+# Plotar o gráfico de dependência para a primeira feature
+shap.dependence_plot(selected_feature[0], shap_values, input_test)
